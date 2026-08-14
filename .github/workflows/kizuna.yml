@@ -5,6 +5,10 @@ on:
     paths:
       - "docker-compose.yml"
 
+permissions:
+  pull-requests: write
+  contents: read
+
 jobs:
   resilience-check:
     runs-on: ubuntu-latest
