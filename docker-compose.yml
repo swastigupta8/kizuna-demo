@@ -48,8 +48,12 @@ services:
 
   shipping-service:
     image: kizuna-demo/shipping-service
+    deploy:
+      replicas: 3
     labels:
       - "kizuna.critical=true"
+      - "kizuna.circuit_breaker=true"
+      - "kizuna.timeout_ms=1500"
 
   inventory-db:
     image: postgres:16
