@@ -6,6 +6,7 @@ services:
       - payment-service
       - inventory-service
       - notification-service
+      - shipping-service
     deploy:
       replicas: 3
     labels:
@@ -44,6 +45,11 @@ services:
     labels:
       - "kizuna.circuit_breaker=true"
       - "kizuna.timeout_ms=1500"
+
+  shipping-service:
+    image: kizuna-demo/shipping-service
+    labels:
+      - "kizuna.critical=true"
 
   inventory-db:
     image: postgres:16
