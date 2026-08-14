@@ -14,7 +14,7 @@ jobs:
       - name: Run Kizuna resilience check
         env:
           KIZUNA_API_URL: ${{ secrets.KIZUNA_API_URL }}
-          SCORE_THRESHOLD: "75"
+          SCORE_THRESHOLD: "80"
         run: python3 .github/scripts/kizuna_check.py
 
       - name: Comment on PR
