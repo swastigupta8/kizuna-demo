@@ -1,0 +1,24 @@
+name: Kizuna Resilience Check
+
+on:
+  pull_request:
+    paths:
+      - "docker-compose.yml"
+
+jobs:
+  resilience-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run Kizuna resilience check
+        env:
+          KIZUNA_API_URL: ${{ secrets.KIZUNA_API_URL }}
+          SCORE_THRESHOLD: "75"
+        run: python3 .github/scripts/kizuna_check.py
+
+      - name: Comment on PR
+        if: always()
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          path: kizuna_comment.md

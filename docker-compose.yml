@@ -1,0 +1,35 @@
+version: "3.9"
+services:
+  booking-api:
+    image: kizuna-demo/booking-api
+    depends_on:
+      - payment-service
+      - inventory-service
+      - notification-service
+    labels:
+      - "kizuna.critical=true"
+
+  payment-service:
+    image: kizuna-demo/payment-service
+    depends_on:
+      - inventory-db
+    labels:
+      - "kizuna.critical=true"
+      - "kizuna.circuit_breaker=true"
+
+  inventory-service:
+    image: kizuna-demo/inventory-service
+    depends_on:
+      - inventory-db
+    deploy:
+      replicas: 2
+    labels:
+      - "kizuna.critical=true"
+
+  notification-service:
+    image: kizuna-demo/notification-service
+    depends_on:
+      - inventory-db
+
+  inventory-db:
+    image: postgres:16
