@@ -1,0 +1,68 @@
+version: "3.9"
+services:
+  cdn-gateway:
+    image: mediaco/cdn-gateway
+    depends_on:
+      - upload-service
+      - streaming-service
+      - search-service
+    deploy:
+      replicas: 3
+    labels:
+      - "kizuna.critical=true"
+      - "kizuna.circuit_breaker=true"
+      - "kizuna.timeout_ms=2000"
+
+  upload-service:
+    image: mediaco/upload-service
+    depends_on:
+      - transcoding-queue
+      - metadata-store
+    deploy:
+      replicas: 2
+    labels:
+      - "kizuna.critical=true"
+      - "kizuna.timeout_ms=5000"
+
+  transcoding-worker:
+    image: mediaco/transcoding-worker
+    depends_on:
+      - transcoding-queue
+      - metadata-store
+    labels: []
+
+  streaming-service:
+    image: mediaco/streaming-service
+    depends_on:
+      - metadata-store
+    deploy:
+      replicas: 2
+    labels:
+      - "kizuna.critical=true"
+      - "kizuna.circuit_breaker=true"
+
+  search-service:
+    image: mediaco/search-service
+    depends_on:
+      - search-index
+    labels:
+      - "kizuna.circuit_breaker=true"
+      - "kizuna.timeout_ms=1500"
+
+  transcoding-queue:
+    image: rabbitmq:3
+    deploy:
+      replicas: 2
+    labels: []
+
+  search-index:
+    image: elasticsearch:8
+    labels:
+      - "kizuna.critical=true"
+
+  metadata-store:
+    image: mongo:7
+    deploy:
+      replicas: 1
+    labels:
+      - "kizuna.critical=true"
